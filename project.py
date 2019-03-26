@@ -8,7 +8,7 @@ def shntYrdAlg(infix):
 
     #Python library that holds the special characters 
     #and their order of precedence
-    specialChars = {'*': 5, '+':4, '?':3, '.':2, '|':1}
+    specialChars = {'*': 25, '+':20, '?':15,'.':10, '|':5}
     # * = 0 or more
     # * = 1 or more
     # ? = 
@@ -25,18 +25,17 @@ def shntYrdAlg(infix):
             stack = stack + c
         elif c ==')':
             while stack[-1] != '(':
-                pofix, stack = pofix + stack[-1], stack[-1]
-            stack = stack[-1]
+                pofix, stack = pofix + stack[-1], stack[:-1]
+            stack = stack[:-1]
         elif c in specialChars:
-            while stack and specialChars.get(c,0) <= specialChars.get(stack[-1],0):
-                pofix, stack = pofix + stack[-1], stack[-1]
+            while stack and specialChars.get(c, 0) <= specialChars.get(stack[-1], 0):
+                pofix, stack = pofix + stack[-1], stack[:-1]
             stack = stack + c
         else:
             pofix = pofix + c
 
     while stack:
-        pofix, stack = pofix + stack[-1], stack[-1]
-    stack = stack[-1]
+        pofix, stack = pofix + stack[-1], stack[:-1]
 
     return pofix
 

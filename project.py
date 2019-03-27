@@ -61,11 +61,13 @@ print (shntYrdAlg("(a*b)|(c.d)"))
 
 
 #Thompson's Construction
-#
+
+#Each one reperesents a state that has two arrows
+#None is used for a label to represent an empty set for the arrows
 class state:
     label, arrow1, arrow2 = None, None, None
 
-#
+# Each NFA contains and intial and an accept state
 class nfa:
     initial, accept = None, None
 
@@ -77,10 +79,22 @@ def compile(pofix):
 
     for c in pofix:
         if c == '*':
-
+            #Pops a single NFA from the stack
+            nfa1 = nfaStack.pop()
+            #Creates new initial and accept states for the new NFA
+            accept, initial = state(), state()
+            #Joins the new accept state to the accept state of nfa1 and the new 
+            #initial state to the initial state of nfa1
+            initial.arrow1, initial.arrow2 = nfa1.initial, accept
+            #Joins the old accept state to the new accept state and to nfa1's intial state
+            nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa.initial, accept
+            #Pushes the new NFA to the stack
+            nfastack.append(nfa(initial, accept))
         elif c == '.':
             #Pops 2 NFA's off the stack
             nfa2, nfa1 = nfaStack.pop(), nfaStack.pop()
+            #Connects first NFA's accept state to the second NFA's 
+            #Initial state
             nfa1.accept.arrow1 = nfa2.initial
             #Pushes the new NFA to the stack
             nfaStack.append(nfa1.initial, nfa2.accept))
@@ -98,10 +112,21 @@ def compile(pofix):
             nfa1.accept.arrow1, nfa2.accept.arrow1 = accept, accept
             #Pushes the new NFA to the stack
             nfastack.append(nfa(initial, accept))
+        elif c == '+':
+            #Pops a single NFA from the stack
+            nfa1 = nfaStack.pop()
+            #Creates new initial and accept states for the new NFA
+            accept, initial = state(), state()
+            #Joins the new initial state to the initial state of nfa1
+            initial.arrow1 = nfa1.initial
+            #Joins the old accept state to the new accept state and to nfa1's intial state
+            nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa.initial, accept
+            #Pushes the new NFA to the stack
+            nfastack.append(nfa(initial, accept))
         else:
             #Creates new accept and initial states
             accept, initial = state(), state()
-            #
+            #Joins the initial state to the accept state using an arrow that is labbelled c
             initial.label, initial.arrow1 = c, accept
             ##Pushes the new NDA to the stack
             nfastack.append(nfa(initial, accept))

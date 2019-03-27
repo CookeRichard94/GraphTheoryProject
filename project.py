@@ -1,6 +1,11 @@
 # Richard Cooke
 # G00331787@gmit.ie
+
 # Graph Theory Project
+# The Purpose of this Project is to create a Python script that can
+# build a non-deterministic finite automaton (NFA) from a regular expression
+# and use the NFA to check if the regular expression matches any given
+# string of text
 
 #Shunting-Yard Algorithm
 #https://brilliant.org/wiki/shunting-yard-algorithm/
@@ -15,6 +20,7 @@ def shntYrdAlg(infix):
     # . = concatenate
     # | = or
  
+    #
     pofix, stack = "", ""
 
     # For loop to loop through each character
@@ -44,9 +50,13 @@ def shntYrdAlg(infix):
 
     return pofix
 
-#
+# Potential test cases to check if the Shunting yard 
+# Algorithm is running without fault
+#expected output should be ab.c*d.|
 print (shntYrdAlg("(a.b)|(c*.d)"))
+#expected output should be abc*.cd*|
 print (shntYrdAlg("(a.*b)|(c*d)"))
+#expected output should be ab*cd.|
 print (shntYrdAlg("(a*b)|(c.d)"))
 
 
@@ -66,13 +76,32 @@ def compile(pofix):
     nfaStack = []
 
     for c in pofix:
-        accept, initial = state(), state()
-        initial.label = c
+        if c == '*':
 
-        if
-
-        elif
-
-        elif
-
-        else
+        elif c == '.':
+            #Pops 2 NFA's off the stack
+            nfa2, nfa1 = nfaStack.pop(), nfaStack.pop()
+            nfa1.accept.arrow1 = nfa2.initial
+            #Pushes the new NFA to the stack
+            nfaStack.append(nfa1.initial, nfa2.accept))
+        elif c == '|':
+            #Pops 2 NFA's off the stack
+            nfa2, nfa1 = nfaStack.pop(), nfaStack.pop()
+            #Creates a new initial state 
+            initial = state()
+            #Connects the new initial state to the two NFA's that have been
+            # popped from the stack
+            initial.arrow1, initial.arrow2 = nfa1.initial, nfa2.initial
+            #Creates a new Accept state
+            accept = state()
+            #Connects the new Accept state to the two NFA's popped from the stack
+            nfa1.accept.arrow1, nfa2.accept.arrow1 = accept, accept
+            #Pushes the new NFA to the stack
+            nfastack.append(nfa(initial, accept))
+        else:
+            #Creates new accept and initial states
+            accept, initial = state(), state()
+            #
+            initial.label, initial.arrow1 = c, accept
+            ##Pushes the new NDA to the stack
+            nfastack.append(nfa(initial, accept))

@@ -158,14 +158,18 @@ print(compile("ab.cd.|"))
 def followes(state):
     # Creates new set, with state as the only member
     states = set()
-    set.add(state)
+    states.add(state)
 
     #Check if any of the arrows are labelled empty
-    if state.label = None:
-        #Follows arrow1
-        states |= followes(state.arrow1)
-        #Follows arrow2
-        states |= followes(state.arrow2)
+    if state.label is None:
+        #Checks if arrow1 is a state
+        if state.arrow1 is not None:
+            #Follows arrow1
+            states |= followes(state.arrow1)
+        #Checks of arrow2 is a state
+        if state.arrow2 is not None:
+            #Follows arrow2
+            states |= followes(state.arrow2)
 
     #Returns the set of states
     return states
@@ -181,7 +185,28 @@ def matchString(infix, string):
     currentState = set()
     nextState = set()
 
+    #Adds the initial satte to the current set
+    currentState |= followes(nfa.initial)
+
     #For loop to loop through each character in the string one by one
     for s in string:
+        #For loop to loop through tbe currentState
+        for c in currentState:
+            #checks if the state is labbeled s
+            if c.label == s:
+                #Adds arrow1 to the next set
+                nextState |= followes(c.arrow1)
+        #sets the currenState to next and clears out the nextState
+        currentState = nextState
+        nextState = set()
+    
+    #Checks if the accept state is in the set for current state
+    return (nfa.accept in currentState)
 
+#Testcases for the matchString function
+infixes = ["a.b.c*", "a.(b|d).c*", "(a.(b|d))*", "a.(b.b)*.c"]
+strings = ["", "abc", "abbc", "abcc", "abad", "abbbc"]
 
+for i in infixes:
+    for s in strings:
+        print(matchString(i,s),i,s)

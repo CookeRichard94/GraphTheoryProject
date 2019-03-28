@@ -47,11 +47,10 @@ def shntYrdAlg(infix):
             while stack and specialChars.get(c, 0) <= specialChars.get(stack[-1], 0):
                 pofix, stack = pofix + stack[-1], stack[:-1]
             stack = stack + c
-        #
+        #if c meets none of the prior if requirements then add c to the postfix
         else:
             pofix = pofix + c
-
-    #
+    #while 
     while stack:
         pofix, stack = pofix + stack[-1], stack[:-1]
 
@@ -69,7 +68,7 @@ def shntYrdAlg(infix):
 
 
 #Thompson's Construction
-#https://cs.stackexchange.com/questions/76488/thompsons-construction-transforming-a-regular-expression-into-an-equivalent-nf
+# https://www.cs.york.ac.uk/fp/lsa/lectures/REToC.pdf
 
 #Each one reperesents a state that has two arrows
 #None is used for a label to represent an empty set for the arrows
@@ -94,6 +93,7 @@ def compile(pofix):
     nfaStack = []
 
     for c in pofix:
+        # 0 or more
         if c == '*':
             #Pops a single NFA from the stack
             nfa1 = nfaStack.pop()
@@ -107,6 +107,7 @@ def compile(pofix):
             nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa1.initial, accept
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(initial, accept))
+        # Concatanate
         elif c == '.':
             #Pops 2 NFA's off the stack
             nfa2, nfa1 = nfaStack.pop(), nfaStack.pop()
@@ -115,6 +116,7 @@ def compile(pofix):
             nfa1.accept.arrow1 = nfa2.initial
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(nfa1.initial, nfa2.accept))
+        # or 
         elif c == '|':
             #Pops 2 NFA's off the stack
             nfa2, nfa1 = nfaStack.pop(), nfaStack.pop()
@@ -129,6 +131,7 @@ def compile(pofix):
             nfa1.accept.arrow1, nfa2.accept.arrow1 = accept, accept
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(initial, accept))
+        # 1 or more
         elif c == '+':
             #Pops a single NFA from the stack
             nfa1 = nfaStack.pop()
@@ -140,11 +143,12 @@ def compile(pofix):
             nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa1.initial, accept
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(initial, accept))
+        # 0 or 1
         elif c == '?':
             #Pops a single NFA from the stack
             nfa1 = nfaStack.pop()
             #Creates new initial and accept states for the new NFA
-            accept, intial = state(), state()
+            accept, initial = state(), state()
             #Joins the new accept state to the accept state of nfa1 and the new 
             #initial state to the initial state of nfa1
             #Accept connected to inital because empty is acceptable
@@ -222,6 +226,7 @@ def matchString(infix, string):
 #strings = ["", "abc", "abbc", "abcc", "abad", "abbbc"]
 
 #Running test from Matching by hand video
+#Change operator at end of infix between '*', '+' and '?'(Not Working)
 infixes = ["(a.a)?"]
 strings = ["", "a", "aa", "aaa", "aaaa"]
 

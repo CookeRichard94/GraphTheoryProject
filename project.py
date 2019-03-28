@@ -89,6 +89,7 @@ class nfa:
 
 #Method that takes in a regular expression and turns them into a 
 #data structure(NFA)
+# https://www.youtube.com/watch?v=RYNN-tb9WxI A helpful video for understanding NFA's
 def compile(pofix):
     nfaStack = []
 
@@ -100,6 +101,7 @@ def compile(pofix):
             initial, accept = state(), state()
             #Joins the new accept state to the accept state of nfa1 and the new 
             #initial state to the initial state of nfa1
+            #Accept connected to inital because empty is acceptable
             initial.arrow1, initial.arrow2 = nfa1.initial, accept
             #Joins the old accept state to the new accept state and to nfa1's intial state
             nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa1.initial, accept
@@ -138,8 +140,19 @@ def compile(pofix):
             nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa1.initial, accept
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(initial, accept))
-        #elif c == '?'
-        #
+        elif c == '?':
+            #Pops a single NFA from the stack
+            nfa1 = nfaStack.pop()
+            #Creates new initial and accept states for the new NFA
+            accept, intial = state(), state()
+            #Joins the new accept state to the accept state of nfa1 and the new 
+            #initial state to the initial state of nfa1
+            #Accept connected to inital because empty is acceptable
+            initial.arrow1, initial.arrow2 = nfa1.initial, accept
+            #
+            nfa1.accept.arrow1 = accept
+            #Pushes the new NFA to the stack
+            nfaStack.append(nfa(initial, accept))
         else:
             #Creates new accept and initial states
             accept, initial = state(), state()
@@ -155,6 +168,7 @@ def compile(pofix):
 #print(compile("ab.cd.|"))
 #print(compile("aa.*"))
 
+# https://swtch.com/~rsc/regexp/regexp1.html
 #Returns the states that can be reach by following the arrows
 def followes(state):
     # Creates new set, with state as the only member
@@ -174,7 +188,6 @@ def followes(state):
 
     #Returns the set of states
     return states
-
 
 #Matches a string to an infix regular expression
 def matchString(infix, string):
@@ -205,11 +218,12 @@ def matchString(infix, string):
     return (nfa.accept in currentState)
 
 #Testcases for the matchString function
-infixes = ["a.b.c*", "a.(b|d).c*", "(a.(b|d))*", "a.(b.b)*.c"]
-strings = ["", "abc", "abbc", "abcc", "abad", "abbbc"]
+#infixes = ["a.b.c*", "a.(b|d).c*", "(a.(b|d))*", "a.(b.b)*.c"]
+#strings = ["", "abc", "abbc", "abcc", "abad", "abbbc"]
 
-#infixes = ["(a|b)*"]
-#strings = ["", "a", "aa", "aaa", "b"]
+#Running test from Matching by hand video
+infixes = ["(a.a)?"]
+strings = ["", "a", "aa", "aaa", "aaaa"]
 
 for i in infixes:
     for s in strings:

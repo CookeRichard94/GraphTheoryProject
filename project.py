@@ -138,6 +138,8 @@ def compile(pofix):
             nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa.initial, accept
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(initial, accept))
+        #elif c == '?'
+        #
         else:
             #Creates new accept and initial states
             accept, initial = state(), state()
@@ -151,3 +153,14 @@ def compile(pofix):
 
 #expected output is a .nfa at a specified memory location
 print(compile("ab.cd.|"))
+
+def matchStrin(infix, string):
+    #Shunt and compile the infix
+    postfix = shntYrdAlg(infix)
+    nfa = compile(postfix)
+
+    #Current set of states and next set of states
+    currentState = set()
+    nextState = set()
+    
+

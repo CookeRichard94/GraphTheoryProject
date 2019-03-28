@@ -154,7 +154,25 @@ def compile(pofix):
 #expected output is a .nfa at a specified memory location
 print(compile("ab.cd.|"))
 
-def matchStrin(infix, string):
+#Returns the states that can be reach by following the arrows
+def followes(state):
+    # Creates new set, with state as the only member
+    states = set()
+    set.add(state)
+
+    #Check if any of the arrows are labelled empty
+    if state.label = None:
+        #Follows arrow1
+        states |= followes(state.arrow1)
+        #Follows arrow2
+        states |= followes(state.arrow2)
+
+    #Returns the set of states
+    return states
+
+
+#Matches a string to an infix regular expression
+def matchString(infix, string):
     #Shunt and compile the infix
     postfix = shntYrdAlg(infix)
     nfa = compile(postfix)
@@ -162,5 +180,8 @@ def matchStrin(infix, string):
     #Current set of states and next set of states
     currentState = set()
     nextState = set()
-    
+
+    #For loop to loop through each character in the string one by one
+    for s in string:
+
 

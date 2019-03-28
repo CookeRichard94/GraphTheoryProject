@@ -13,7 +13,7 @@ def shntYrdAlg(infix):
 
     #Python library that holds the special characters 
     #and their order of precedence
-    specialChars = {'*': 25, '+':20, '?':15,'.':10, '|':5}
+    specialChars = {'*': 25, '+': 20, '?': 15, '.':10, '|':5}
     # * = 0 or more
     # + = 1 or more
     # ? = 0 or 1
@@ -61,11 +61,11 @@ def shntYrdAlg(infix):
 # Potential test cases to check if the Shunting yard 
 # Algorithm is running without fault
 #expected output should be ab.c*d.|
-print (shntYrdAlg("(a.b)|(c*.d)"))
+#print (shntYrdAlg("(a.b)|(c*.d)"))
 #expected output should be abc*.cd*|
-print (shntYrdAlg("(a.*b)|(c*d)"))
+#print (shntYrdAlg("(a.*b)|(c*d)"))
 #expected output should be ab*cd.|
-print (shntYrdAlg("(a*b)|(c.d)"))
+#print (shntYrdAlg("(a*b)|(c.d)"))
 
 
 #Thompson's Construction
@@ -81,7 +81,7 @@ class state:
 # Each NFA contains and intial and an accept state
 class nfa:
     #Variables in the nfa class
-    initial, accept = None, None
+    initial, accept = None, None 
 
     #constructor for building a new nfa
     def __init__(self, initial, accept):
@@ -97,12 +97,12 @@ def compile(pofix):
             #Pops a single NFA from the stack
             nfa1 = nfaStack.pop()
             #Creates new initial and accept states for the new NFA
-            accept, initial = state(), state()
+            initial, accept = state(), state()
             #Joins the new accept state to the accept state of nfa1 and the new 
             #initial state to the initial state of nfa1
             initial.arrow1, initial.arrow2 = nfa1.initial, accept
             #Joins the old accept state to the new accept state and to nfa1's intial state
-            nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa.initial, accept
+            nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa1.initial, accept
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(initial, accept))
         elif c == '.':
@@ -135,7 +135,7 @@ def compile(pofix):
             #Joins the new initial state to the initial state of nfa1
             initial.arrow1 = nfa1.initial
             #Joins the old accept state to the new accept state and to nfa1's intial state
-            nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa.initial, accept
+            nfa1.accept.arrow1, nfa1.accept.arrow2 = nfa1.initial, accept
             #Pushes the new NFA to the stack
             nfaStack.append(nfa(initial, accept))
         #elif c == '?'
@@ -152,7 +152,8 @@ def compile(pofix):
     return nfaStack.pop()
 
 #expected output is a .nfa at a specified memory location
-print(compile("ab.cd.|"))
+#print(compile("ab.cd.|"))
+#print(compile("aa.*"))
 
 #Returns the states that can be reach by following the arrows
 def followes(state):
@@ -206,6 +207,9 @@ def matchString(infix, string):
 #Testcases for the matchString function
 infixes = ["a.b.c*", "a.(b|d).c*", "(a.(b|d))*", "a.(b.b)*.c"]
 strings = ["", "abc", "abbc", "abcc", "abad", "abbbc"]
+
+#infixes = ["(a|b)*"]
+#strings = ["", "a", "aa", "aaa", "b"]
 
 for i in infixes:
     for s in strings:
